@@ -1,0 +1,35 @@
+.body_index_sign {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .form_index_sign {
+    max-width: 400px;
+    width: 100%;
+  }
+
+
+.form-center {
+  display:flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.reg {
+  text-align: center;
+  margin: 20px;
+  
+}
+
+.link {
+    text-align: center;
+    margin-top: 15px;
+}
+
+#err {
+  text-align: center;
+}
+
+i {
+  color: #ff0000;
+}

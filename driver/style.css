@@ -1,0 +1,61 @@
+header a {
+    font-family: sans-serif;
+    text-decoration: none;
+}
+
+header li {
+    list-style: none;
+}
+header {
+
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #3d3d3d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: 900;
+    color: #d1ccc0;
+
+}
+
+header nav ul li {
+    position: relative;
+    float: left;
+}
+
+header nav ul li a {
+    
+    padding: 20px;
+    color: #d1ccc0;
+    font-size: 15px;
+    display: block;
+}
+
+header nav ul li a:hover{
+    background-color: black;
+    color: white;
+}
+
+#div_form {
+    padding: 0 7%;
+    margin-top: 4%;
+    display: flex;
+}
+
+#form_order {
+    width: 50%;
+}
+
+#map {
+    margin-left: 200px;
+    height: 400px;
+    width: 850px;
+    background-color: #3d3d3d;
+}
