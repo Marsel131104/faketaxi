@@ -1,8 +1,8 @@
 $( "#btn_cancel" ).on( "click", function() { 
-    var id = $("[name='id']").val();
-    var data = {id: id, cost: $("[name='cost']").val()};
+    var session_id = $("[name='session_id']").val();
+    var data = {session_id: session_id, cost: $("[name='cost']").val()};
     $.ajax({
-        url: '/taxi/passenger/delete_order.php',
+        url: 'delete_order.php',
         type: 'POST', // Или 'POST', в зависимости от метода запроса
         data: data,
         success: function(result) {

@@ -64,7 +64,7 @@ $( "#btn" ).on( "click", function() {
         $("[name='address1'], [name='address2']").prop('disabled', true);
         // если данные корректны строим маршрут и выводим кол-во свободных машин
         $.ajax({
-            url: '/taxi/passenger/free_drivers.php',
+            url: 'free_drivers.php',
             type: 'GET', // Или 'POST', в зависимости от метода запроса
             dataType: 'json', // Ожидаемый формат данных
             success: function(result) {
@@ -80,18 +80,18 @@ $( "#btn" ).on( "click", function() {
                         // var searchParams = new URLSearchParams(paramsString);
 
 
-                        var id = $("[name='id']").val();
+                        var session_id = $("[name='session_id']").val();
                         $.ajax({
-                            url: '/taxi/passenger/isset_order.php',
+                            url: 'isset_order.php',
                             type: 'POST',
                             dataType: 'json',
-                            data: {id: id},
+                            data: {session_id: session_id},
                             success: function(result2){
                                 if (!result2['new_order']) {
-                                    $('i').html('<i>Заказ принят в обработку. Вы можете посмотреть его статус в <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="active_orders.php?id=' + id + '">активных поездках</a></i>');
+                                    $('i').html('<i>Заказ принят в обработку. Вы можете посмотреть его статус в <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="active_orders.php">активных поездках</a></i>');
                                     $('#free_cars').empty();
                                     map.geoObjects.remove(multiRoute);
-                                    order(result, id);
+                                    order(result, session_id);
                                 } else {
                                     $('i').html('<i>У вас уже есть активный заказ</i>');
                                     $('#free_cars').empty();
@@ -156,7 +156,7 @@ $( "#btn" ).on( "click", function() {
 });
 
 
-function order(data, id) {
+function order(data, session_id) {
     if (data.length < 2) {
         var cost; // стоимость поездки
         var dist; // расстояние
@@ -172,11 +172,11 @@ function order(data, id) {
             data['new_order'] = addresses['address1'] + "-" +  addresses['address2'] + 
             "-" + (parseInt(dist) / 1000).toFixed(2) + "-" + parseInt(cost);
             
-            data['id_user'] = id;
+            data['id_user'] = session_id;
             data['status_order'] = 'Идёт поиск машин'; 
 
             $.ajax({
-                url: '/taxi/passenger/add_order_for_driver.php',
+                url: 'add_order_for_driver.php',
                 type: 'POST', 
                 data: data
             });
@@ -187,7 +187,7 @@ function order(data, id) {
     } else {
         
         new_order = addresses['address1'] + "-" + addresses['address2'];
-        var minId = data[0]['id'];
+        var minId = data[0]['session_id'];
         var minAddress = data[0]['address'];
         ymaps.route([minAddress, "Санкт-Петербург, " + addresses['address1']]).then(function (route) {
             var time1 = route.getJamsTime();
@@ -202,7 +202,7 @@ function order(data, id) {
                         var time2 = route.getJamsTime();
                         if (parseInt(time2) < parseInt(time1)) {
                             time1 = time2;
-                            minId = value['id'];
+                            minId = value['session_id'];
                             minAddress = value['address'];
                         }
                         // т.к функция yamp.route() асинхронная, ждем окночания ее выполнения и идем дальше

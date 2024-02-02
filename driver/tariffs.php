@@ -1,6 +1,12 @@
 <?php
+session_start();
 
-$id = $_GET['id'];
+if ((!isset($_SESSION['driver'])) or (isset($_SESSION['driver']) and !in_array(session_id(), $_SESSION['driver']))) {
+    header('Location: ../index.php');
+    die();
+}
+
+$session_id = session_id();
 ?>
 
 <!DOCTYPE html>
@@ -14,17 +20,17 @@ $id = $_GET['id'];
 
 <body style="background-color: #f9ca24">
 
-    <header>
-        <a href="main.php?id=<?= $id ?>" class="logo">FAKETAXI</a>
-        <nav>
-            <ul>
-                <li><a href="profile.php??id=<?= $id ?>">Профиль</a></li>
-                <li><a href="history_orders?id=<?= $id ?>">История поездок</a></li>
-                <li><a href="tariffs.php?id=<?= $id ?>">Тарифы</a></li>
-            </ul>
+<header>
+    <a href="main.php" class="logo">FAKETAXI</a>
+    <nav>
+        <ul>
+            <li><a href="profile.php">Профиль</a></li>
+            <li><a href="history_orders.php">История поездок</a></li>
+            <li><a href="tariffs.php">Тарифы</a></li>
+        </ul>
 
-        </nav>
-    </header>
+    </nav>
+</header>
 
     <h4 style="text-align: center; margin-top: 20px;"><span class="badge bg-secondary">Цена за километр: 50р<br /><br />
             < 1км: 100р</span>

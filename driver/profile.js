@@ -35,11 +35,11 @@ $( "#btn_ok" ).on( "click", function() {
     else {
         $('#top_i').empty();
 
-        var id = $("[name='id']").val(); 
-        data_new['id'] = id;
+        var session_id = $("[name='session_id']").val();
+        data_new['session_id'] = session_id;
 
         $.ajax({
-            url: '/taxi/driver/edit.php',
+            url: 'edit.php',
             type: 'POST', 
             data: data_new,
             success: function(result) {
@@ -76,10 +76,10 @@ $( "#start_shift" ).on( "click", function() {
     if ($('#hidden_input').val() == '') $('#bottom_i').html('<i>Прежде чем выйти на смену, задайте адрес на главной странице</i>');
     else {
 
-        var id = $("[name='id']").val();
-        data = {id: id};
+        var session_id = $("[name='session_id']").val();
+        data = {session_id: session_id};
         $.ajax({
-            url: '/taxi/driver/add_shift.php',
+            url: 'add_shift.php',
             type: 'POST',
             data: data,
             success: function() {
@@ -98,10 +98,10 @@ $( "#start_shift" ).on( "click", function() {
 $( "#finish_shift" ).on( "click", function() {
     if ($('#hidden_input_new-order').val() == '') {
 
-        var id = $("[name='id']").val();
-        data = {id: id};
+        var session_id = $("[name='session_id']").val();
+        data = {session_id: session_id};
         $.ajax({
-            url: '/taxi/driver/finish_shift.php',
+            url: 'finish_shift.php',
             type: 'POST',
             data: data,
             success: function() {

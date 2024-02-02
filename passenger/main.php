@@ -1,8 +1,17 @@
 <?php
-include("../db/db_connect.php");
+session_start();
+print_r($_SESSION);
 
-$id = $_GET['id'];
-$result = mysqli_query($lnk, "SELECT new_order FROM users WHERE id = $id");
+if ((!isset($_SESSION['user'])) or (isset($_SESSION['user']) and !in_array(session_id(), $_SESSION['user']))) {
+    header('Location: ../index.php');
+    die();
+}
+
+require_once("../db/db_connect.php");
+
+$session_id = session_id();
+
+$result = mysqli_query($lnk, "SELECT new_order FROM users WHERE session_id = '$session_id'");
 $row = mysqli_fetch_assoc($result);
 
 ?>
@@ -20,23 +29,23 @@ $row = mysqli_fetch_assoc($result);
 <body style="background-color: #f9ca24">
 
     <header>
-        <a href="main.php?id=<?= $id ?>" class="logo">FAKETAXI</a>
+        <a href="main.php" class="logo">FAKETAXI</a>
         <nav>
             <ul>
-                <li><a href="profile.php?id=<?= $id ?>">Профиль</a></li>
+                <li><a href="profile.php">Профиль</a></li>
                 <?php
-                if ($row['new_order']) echo '<li><a href="active_orders.php?id=' . $id . '">Активные поездки <span class="badge bg-danger">1</span></a></li>';
-                else echo '<li><a href="active_orders.php?id=' . $id . '">Активные поездки</a></li>';
+                if ($row['new_order']) echo '<li><a href="active_orders.php">Активные поездки <span class="badge bg-danger">1</span></a></li>';
+                else echo '<li><a href="active_orders.php">Активные поездки</a></li>';
                 ?>
 
-                <li><a href="history_orders.php?id=<?= $id ?>">История поездок</a></li>
-                <li><a href="tariffs.php?id=<?= $id ?>">Тарифы</a></li>
+                <li><a href="history_orders.php">История поездок</a></li>
+                <li><a href="tariffs.php">Тарифы</a></li>
             </ul>
 
         </nav>
     </header>
 
-    <input name="id" value='<?= $id ?>' hidden>
+    <input name="session_id" value='<?= $session_id ?>' hidden>
 
 
     <h4 style="text-align: center; margin-top: 20px;"><span class="badge bg-success">Сервис по заказу такси в СПб</span></h4>

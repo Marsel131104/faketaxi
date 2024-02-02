@@ -53,13 +53,13 @@ $( "#btn" ).on( "click", function() {
 
 
 
-        var id = $("[name='id']").val(); 
-        address['id'] = id;
+        var session_id = $("[name='session_id']").val();
+        address['session_id'] = session_id;
         
 
 
         $.ajax({
-            url: '/taxi/driver/add_address.php',
+            url: 'add_address.php',
             type: 'POST',
             data: address,
             success: function(response) {
@@ -74,7 +74,7 @@ $( "#btn" ).on( "click", function() {
 
 $( "#btn_cancel" ).on( "click", function() {
     $.ajax({
-        url: '/taxi/driver/free_drivers.php',
+        url: 'free_drivers.php',
         type: 'GET',
         dataType: 'json',
         success: function(result) {
@@ -82,7 +82,7 @@ $( "#btn_cancel" ).on( "click", function() {
             if (result.length == 0) {
 
                 $.ajax({
-                    url: '/taxi/driver/delete_order.php',
+                    url: 'delete_order.php',
                     type: 'POST',
                     data: {id_user: $('[name="id_user"]').val(), cost: $('[name="cost"]').val()},
                     success: function() {
@@ -97,12 +97,12 @@ $( "#btn_cancel" ).on( "click", function() {
                                      
                 });
             } else {
-                var id = $("[name='id']").val(); 
+                var session_id = $("[name='session_id']").val();
 
                 $.ajax({
-                    url: '/taxi/driver/transfer_order.php',
+                    url: 'transfer_order.php',
                     type: 'POST',
-                    data: {id: id, cost: $('[name="cost"]').val()},
+                    data: {session_id: session_id, cost: $('[name="cost"]').val()},
                     success: function() {
                         $(".card").hide();
                         $(".form-label").removeAttr('hidden');
@@ -124,11 +124,11 @@ $( "#btn_cancel" ).on( "click", function() {
 });
 
 $( "#btn_ok" ).on( "click", function() {
-    var id = $("[name='id']").val();
+    var session_id = $("[name='session_id']").val();
     $.ajax({
-        url: '/taxi/driver/take_order.php',
+        url: 'take_order.php',
         type: 'POST',
-        data: {id: id, id_user: $("[name='id_user']").val(), address2: $("[name='address2']").val()},
+        data: {session_id: session_id, id_user: $("[name='id_user']").val(), address2: $("[name='address2']").val()},
         success: function(result) {
             if (result == 'Заказ был отменен или принят другим водителем') {
                 $("#alert").removeAttr('hidden');

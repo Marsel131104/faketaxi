@@ -1,11 +1,18 @@
 <?php
-
-include("../db/db_connect.php");
-
-$id = $_GET['id'];
+session_start();
 
 
-$result = mysqli_query($lnk, "SELECT name, surname, email, new_order FROM users WHERE id=$id");
+if ((!isset($_SESSION['user'])) or (isset($_SESSION['user']) and !in_array(session_id(), $_SESSION['user']))) {
+    header('Location: ../index.php');
+    die();
+}
+
+require_once("../db/db_connect.php");
+
+$session_id = session_id();
+
+
+$result = mysqli_query($lnk, "SELECT name, surname, email, new_order FROM users WHERE session_id = '$session_id'");
 $row = mysqli_fetch_assoc($result);
 ?>
 
@@ -21,29 +28,30 @@ $row = mysqli_fetch_assoc($result);
 
 <body style="background-color: #f9ca24; ">
 
-    <header>
-        <a href="main.php?id=<?= $id ?>" class="logo">FAKETAXI</a>
-        <nav>
-            <ul>
-                <li><a href="profile.php?id=<?= $id ?>">Профиль</a></li>
-                <?php
-                if ($row['new_order']) echo '<li><a href="active_orders.php?id=' . $id . '">Активные поездки <span class="badge bg-danger">1</span></a></li>';
-                else echo '<li><a href="active_orders.php?id=' . $id . '">Активные поездки</a></li>';
-                ?>
+<header>
+    <a href="main.php" class="logo">FAKETAXI</a>
+    <nav>
+        <ul>
+            <li><a href="profile.php">Профиль</a></li>
+            <?php
+            if ($row['new_order']) echo '<li><a href="active_orders.php">Активные поездки <span class="badge bg-danger">1</span></a></li>';
+            else echo '<li><a href="active_orders.php">Активные поездки</a></li>';
+            ?>
 
-                <li><a href="history_orders.php?id=<?= $id ?>">История поездок</a></li>
-                <li><a href="tariffs.php?id=<?= $id ?>">Тарифы</a></li>
-            </ul>
+            <li><a href="history_orders.php">История поездок</a></li>
+            <li><a href="tariffs.php">Тарифы</a></li>
+        </ul>
 
-        </nav>
-    </header>
+    </nav>
+</header>
 
-    <input name="id" value='<?= $id ?>' hidden>
+
+    <input name="session_id" value='<?= $session_id ?>' hidden>
 
 
     <div style="text-align: center;">
         <h4 style="text-align: center; margin-top: 20px; display: inline-block;"><span class="badge bg-success">Ваши личные данные</span></h4>
-        <a href="/taxi/registration/logout.php" class="link-danger" style="float: right; margin-top: 20px; margin-right: 20px;">Выйти</a>
+        <a href="../logout.php" class="link-danger" style="float: right; margin-top: 20px; margin-right: 20px;">Выйти</a>
     </div>
 
 

@@ -1,10 +1,7 @@
 <?php
 session_start();
 
-
-$lnk = @mysqli_connect("localhost", "root", "", "course") or die('Cannot connect to server');
-mysqli_select_db($lnk, "course") or die('Cannot open database');
-mysqli_set_charset($lnk, 'utf8');
+require_once("db/db_connect.php");
 
 $value_select = $_POST["value_select"];
 $value_name = $_POST["value_name"];
@@ -38,17 +35,26 @@ if (($value_select == "Выберите...") or ($value_name == "") or ($value_s
 
             if (!$flag) header('Location: index.php?password_error');
             else { // если пароль надежный, регистрируем пользователя и переходим в лк
-                $_SESSION["login"] = $value_email;
 
 
                 $hash_password = password_hash($value_password, PASSWORD_DEFAULT);
+
+
+
                 mysqli_query($lnk, "INSERT INTO driver (name, surname, email, password, free) VALUES
                 ('$value_name', '$value_surname', '$value_email', '$hash_password', '0')");
 
-                $result = mysqli_query($lnk, "SELECT id FROM driver WHERE email = '" . $value_email . "'");
-                $row = mysqli_fetch_assoc($result);
-                $id = $row["id"];
-                header('Location: /taxi/driver/main.php?id=' . $id . '');
+                $session_id = session_id();
+                if ((!isset($_SESSION['driver'])) or (isset($_SESSION['driver']) and !in_array(session_id(), $_SESSION['driver']))) {
+                    $_SESSION['driver'][] = session_id();
+
+                    mysqli_query($lnk, "UPDATE driver SET session_id = '$session_id' WHERE email = '$value_email'");
+                } else {
+                    mysqli_query($lnk, "UPDATE driver SET session_id = '' WHERE session_id = '$session_id'");
+                    mysqli_query($lnk, "UPDATE driver SET session_id = '$session_id' WHERE email = '$value_email'");
+                }
+
+                header('Location: sign.php');
             }
         }
     } else {
@@ -73,17 +79,24 @@ if (($value_select == "Выберите...") or ($value_name == "") or ($value_s
 
             if (!$flag) header('Location: index.php?password_error');
             else { // если пароль надежный, регистрируем пользователя и переходим в лк
-                $_SESSION["login"] = $value_email;
 
 
                 $hash_password = password_hash($value_password, PASSWORD_DEFAULT);
                 mysqli_query($lnk, "INSERT INTO users (name, surname, email, password) VALUES
                 ('$value_name', '$value_surname', '$value_email', '$hash_password')");
 
-                $result = mysqli_query($lnk, "SELECT id FROM users WHERE email = '$value_email'");
-                $row = mysqli_fetch_assoc($result);
-                $id = $row["id"];
-                header('Location: /taxi/passenger/main.php?id=' . $id . '');
+
+                $session_id = session_id();
+                if ((!isset($_SESSION['user'])) or (isset($_SESSION['user']) and !in_array(session_id(), $_SESSION['user']))) {
+                    $_SESSION['user'][] = session_id();
+
+                    mysqli_query($lnk, "UPDATE users SET session_id = '$session_id' WHERE email = '$value_email'");
+                } else {
+                    mysqli_query($lnk, "UPDATE users SET session_id = '' WHERE session_id = '$session_id'");
+                    mysqli_query($lnk, "UPDATE users SET session_id = '$session_id' WHERE email = '$value_email'");
+                }
+
+                header('Location: sign.php');
             }
         }
     }

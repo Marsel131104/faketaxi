@@ -1,9 +1,7 @@
 <?php
-// session_start();
+session_start();
+require_once("db/db_connect.php");
 
-$lnk = @mysqli_connect("localhost", "root", "", "course") or die('Cannot connect to server');
-mysqli_select_db($lnk, "course") or die('Cannot open database');
-mysqli_set_charset($lnk, 'utf8');
 
 $value_select = $_POST["value_select"];
 $value_email = $_POST["value_email"];
@@ -37,8 +35,18 @@ else { // проверяем есть ли такой пользователь �
 
             if (!$flag) header('Location: sign.php?password_error');
             else {
+                $session_id = session_id();
+                if ((!isset($_SESSION['driver'])) or (isset($_SESSION['driver']) and !in_array(session_id(), $_SESSION['driver']))) {
+                    $_SESSION['driver'][] = session_id();
 
-                header("Location: /taxi/driver/main.php?id=" . $id . "");
+                    mysqli_query($lnk, "UPDATE driver SET session_id = '$session_id' WHERE email = '$value_email'");
+                } else {
+                    mysqli_query($lnk, "UPDATE driver SET session_id = '' WHERE session_id = '$session_id'");
+                    mysqli_query($lnk, "UPDATE driver SET session_id = '$session_id' WHERE email = '$value_email'");
+                }
+
+
+                header("Location: driver/main.php");
             }
         }
     } else {
@@ -66,7 +74,32 @@ else { // проверяем есть ли такой пользователь �
 
             if (!$flag) header('Location: sign.php?password_error');
             else {
-                header("Location: /taxi/passenger/main.php?id=" . $id . "");
+
+                $session_id = session_id();
+                if ((!isset($_SESSION['user'])) or (isset($_SESSION['user']) and !in_array(session_id(), $_SESSION['user']))) {
+                    $_SESSION['user'][] = session_id();
+
+                    mysqli_query($lnk, "UPDATE users SET session_id = '$session_id' WHERE email = '$value_email'");
+                } else {
+                    $result = mysqli_query($lnk, "SELECT new_order, session_id FROM users WHERE email = '$value_email'");
+                    $row = mysqli_fetch_assoc($result);
+
+                    $old_session_id = $row['session_id'];
+
+
+                    if (!empty($row['new_order'])) {
+                        mysqli_query($lnk, "UPDATE driver SET id_user = '$session_id' WHERE id_user = '$old_session_id'");
+                        mysqli_query($lnk, "UPDATE users SET session_id = '$session_id' WHERE email = '$value_email'");
+
+                    } else {
+                        mysqli_query($lnk, "UPDATE users SET session_id = '' WHERE session_id = '$session_id'");
+                        mysqli_query($lnk, "UPDATE users SET session_id = '$session_id' WHERE email = '$value_email'");
+                    }
+
+
+                }
+
+                header("Location: passenger/main.php");
             }
         }
     }

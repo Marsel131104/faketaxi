@@ -38,11 +38,11 @@ $( "#btn_ok" ).on( "click", function() {
         $('i').empty();
 
 
-        var id = $("[name='id']").val();
-        data_new['id'] = id;
+        var session_id = $("[name='session_id']").val();
+        data_new['session_id'] = session_id;
 
         $.ajax({
-            url: '/taxi/passenger/edit.php',
+            url: 'edit.php',
             type: 'POST', // Или 'POST', в зависимости от метода запроса
             data: data_new,
             success: function(result) {

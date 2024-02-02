@@ -1,9 +1,6 @@
 <?php
-//session_start();
+session_start();
 
-// if (!empty($_SESSION["login"])) {
-//   unset($_SESSION["login"]);
-// }
 ?>
 
 

@@ -1,10 +1,16 @@
 <?php
+session_start();
+if ((!isset($_SESSION['user'])) or (isset($_SESSION['user']) and !in_array(session_id(), $_SESSION['user']))) {
+    header('Location: ../index.php');
+    die();
+}
 
-include("../db/db_connect.php");
-$id = $_GET['id'];
 
+require_once("../db/db_connect.php");
 
-$result = mysqli_query($lnk, "SELECT new_order FROM users WHERE id = $id");
+$session_id = session_id();
+
+$result = mysqli_query($lnk, "SELECT new_order FROM users WHERE session_id = '$session_id'");
 $items = array();
 while ($row = mysqli_fetch_assoc($result)) {
     array_push($items, $row);
@@ -18,7 +24,7 @@ if (!empty($items[0]['new_order'])) {
     $address2 = $fields[1];
     $dist = $fields[2];
     $cost = $fields[3];
-    $result2 = mysqli_query($lnk, "SELECT status_order FROM driver WHERE id_user = $id");
+    $result2 = mysqli_query($lnk, "SELECT status_order FROM driver WHERE id_user = '$session_id'");
     $row2 = mysqli_fetch_assoc($result2);
     $status_order = $row2['status_order'];
 }
@@ -37,25 +43,25 @@ if (!empty($items[0]['new_order'])) {
 
 <body style="background-color: #f9ca24">
 
-    <header>
-        <a href="main.php?id=<?= $id ?>" class="logo">FAKETAXI</a>
-        <nav>
-            <ul>
-                <li><a href="profile.php?id=<?= $id ?>">Профиль</a></li>
-                <?php
-                if (!empty($row['new_order'])) echo '<li><a href="active_orders.php?id=' . $id . '">Активные поездки <span class="badge bg-danger">1</span></a></li>';
-                else echo '<li><a href="active_orders.php?id=' . $id . '">Активные поездки</a></li>';
-                ?>
+<header>
+    <a href="main.php" class="logo">FAKETAXI</a>
+    <nav>
+        <ul>
+            <li><a href="profile.php">Профиль</a></li>
+            <?php
+            if (!empty($row['new_order'])) echo '<li><a href="active_orders.php">Активные поездки <span class="badge bg-danger">1</span></a></li>';
+            else echo '<li><a href="active_orders.php">Активные поездки</a></li>';
+            ?>
 
-                <li><a href="history_orders.php?id=<?= $id ?>">История поездок</a></li>
-                <li><a href="tariffs.php?id=<?= $id ?>">Тарифы</a></li>
-            </ul>
+            <li><a href="history_orders.php">История поездок</a></li>
+            <li><a href="tariffs.php">Тарифы</a></li>
+        </ul>
 
-        </nav>
-    </header>
+    </nav>
+</header>
 
     <input name="cost" value='<?= $cost ?>' hidden>
-    <input name="id" value='<?= $id ?>' hidden>
+    <input name="session_id" value='<?= $session_id ?>' hidden>
 
     <div id="alert" class="alert alert-success" role="alert" style="text-align: center" hidden>
         Ваш заказ отменен!

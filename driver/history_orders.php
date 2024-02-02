@@ -1,9 +1,17 @@
 <?php
-include("../db/db_connect.php");
+session_start();
+
+if ((!isset($_SESSION['driver'])) or (isset($_SESSION['driver']) and !in_array(session_id(), $_SESSION['driver']))) {
+    header('Location: ../index.php');
+    die();
+}
 
 
-$id = $_GET['id'];
-$result = mysqli_query($lnk, "SELECT new_order, history FROM driver WHERE id = $id");
+
+require_once("../db/db_connect.php");
+
+$session_id = session_id();
+$result = mysqli_query($lnk, "SELECT new_order, history FROM driver WHERE session_id = '$session_id'");
 $row = mysqli_fetch_assoc($result);
 if (!empty($row['history'])) {
     $fields = explode(';', $row['history']);
@@ -23,17 +31,17 @@ if (!empty($row['history'])) {
 
 <body style="background-color: #f9ca24">
 
-    <header>
-        <a href="main.php?id=<?= $id ?>" class="logo">FAKETAXI</a>
-        <nav>
-            <ul>
-                <li><a href="profile.php?id=<?= $id ?>">Профиль</a></li>
-                <li><a href="history_orders?id=<?= $id ?>">История поездок</a></li>
-                <li><a href="tariffs.php?id=<?= $id ?>">Тарифы</a></li>
-            </ul>
+<header>
+    <a href="main.php" class="logo">FAKETAXI</a>
+    <nav>
+        <ul>
+            <li><a href="profile.php">Профиль</a></li>
+            <li><a href="history_orders.php">История поездок</a></li>
+            <li><a href="tariffs.php">Тарифы</a></li>
+        </ul>
 
-        </nav>
-    </header>
+    </nav>
+</header>
 
     <?php
     if (!empty($row['history'])) {

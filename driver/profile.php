@@ -1,8 +1,17 @@
 <?php
-include("../db/db_connect.php");
+session_start();
 
-$id = $_GET['id'];
-$result = mysqli_query($lnk, "SELECT name, surname, email, free, address, new_order FROM driver WHERE id = $id");
+if ((!isset($_SESSION['driver'])) or (isset($_SESSION['driver']) and !in_array(session_id(), $_SESSION['driver']))) {
+    header('Location: ../index.php');
+    die();
+}
+
+
+
+require_once("../db/db_connect.php");
+
+$session_id = session_id();
+$result = mysqli_query($lnk, "SELECT name, surname, email, free, address, new_order FROM driver WHERE session_id = '$session_id'");
 $row = mysqli_fetch_assoc($result);
 ?>
 
@@ -18,26 +27,26 @@ $row = mysqli_fetch_assoc($result);
 
 <body style="background-color: #f9ca24; ">
 
-    <header>
-        <a href="main.php?id=<?= $id ?>" class="logo">FAKETAXI</a>
-        <nav>
-            <ul>
-                <li><a href="profile.php??id=<?= $id ?>">Профиль</a></li>
-                <li><a href="history_orders?id=<?= $id ?>">История поездок</a></li>
-                <li><a href="tariffs.php?id=<?= $id ?>">Тарифы</a></li>
-            </ul>
+<header>
+    <a href="main.php" class="logo">FAKETAXI</a>
+    <nav>
+        <ul>
+            <li><a href="profile.php">Профиль</a></li>
+            <li><a href="history_orders.php">История поездок</a></li>
+            <li><a href="tariffs.php">Тарифы</a></li>
+        </ul>
 
-        </nav>
-    </header>
+    </nav>
+</header>
 
-    <input name="id" value='<?= $id ?>' hidden>
+<input name="session_id" value='<?= $session_id ?>' hidden>
     <input id="hidden_input" hidden value="<?= $row['address'] ?>">
     <input id="hidden_input_new-order" hidden value="<?= $row['new_order'] ?>">
 
 
     <div style="text-align: center;">
         <h4 style="text-align: center; margin-top: 20px; display: inline-block;"><span class="badge bg-success">Ваши личные данные</span></h4>
-        <a href="/taxi/registration/sign.php" class="link-danger" style="float: right; margin-top: 20px; margin-right: 20px;">Выйти</a>
+        <a href="../logout.php" class="link-danger" style="float: right; margin-top: 20px; margin-right: 20px;">Выйти</a>
     </div>
 
 
